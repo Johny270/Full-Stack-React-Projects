@@ -24,7 +24,11 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: "Password is required"
     },
-    salt: String
+    salt: String,
+    about: {
+        type: string,
+        trim: true
+    }
 })
 
 // Schema method and business logic
