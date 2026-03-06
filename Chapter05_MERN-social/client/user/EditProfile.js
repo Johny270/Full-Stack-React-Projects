@@ -73,6 +73,7 @@ const useStyles = makeStyles(theme => ({
         const user = {
             name: values.name || undefined,
             email: values.email || undefined,
+            about: values.about || undefined,
             password: values.password || undefined
         }
         update({
@@ -103,6 +104,7 @@ const useStyles = makeStyles(theme => ({
                     Edit Profile
                 </Typography>
                 <TextField id="name" label="Name" className={classes.textField} value={values.name} onChange={handleChange('name')} margin="normal" /><br />
+                <TextField id="multiline-flexible" label="About" multiline rows="2" className={classes.textField} value={values.about} onChange={handleChange('about')} margin="normal" /><br />
                 <TextField id="email" label="Email" className={classes.textField} value={values.email} onChange={handleChange('email')} margin="normal" /><br />
                 <TextField id="password" label="Password" className={classes.textField} value={values.password} onChange={handleChange('password')} margin="normal" />
                 <br /> {

@@ -26,7 +26,7 @@ const UserSchema = new mongoose.Schema({
     },
     salt: String,
     about: {
-        type: string,
+        type: String,
         trim: true
     }
 })

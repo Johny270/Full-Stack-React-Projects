@@ -34,6 +34,9 @@ const useStyles = makeStyles(theme => ({
     submit: {
         margin: 'auto',
         marginBottom: theme.spacing(2)
+    },
+    cardActions: {
+        justifyContent: 'center'
     }
 }))
 
@@ -103,7 +106,7 @@ export default function Signin(props) {
                         </Typography>)
                     }
                 </CardContent>
-                <CardActions>
+                <CardActions className={classes.cardActions}>
                     <Button color="primary" variant="contained" 
                         onClick={clickSubmit} className={classes.submit}>Submit</Button>
                 </CardActions>

@@ -6,11 +6,11 @@ import auth from './auth-helper.js'
 // the user is authenticated, or else they get redirected to signin
 // component
 const PrivateRoute = ({ component: Component, ...rest }) => (
-    <Route {... rest} render={props = (
+    <Route {...rest} render={props => (
         auth.isAuthenticated() ? (
             <Component {...props} />
         ) : (
-            <Redirect to = {{
+            <Redirect to={{
                 pathname: '/signin',
                 state: { from: props.location }
             }} />

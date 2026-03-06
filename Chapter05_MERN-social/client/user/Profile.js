@@ -27,6 +27,9 @@ const useStyles = makeStyles(theme => ({
   title: {
     marginTop: theme.spacing(3),
     color: theme.palette.protectedTitle
+  },
+  about: {
+    textAlign: 'center'
   }
 }))
 
@@ -86,6 +89,10 @@ export default function Profile({ match }) {
                 <ListItem>
                     <ListItemText primary={"Joined: " + (
                         new Date(user.created)).toDateString()} />
+                </ListItem>
+                <Divider />
+                <ListItem className={classes.about}>
+                    <ListItemText primary={user.about} />
                 </ListItem>
             </List>
         </Paper>

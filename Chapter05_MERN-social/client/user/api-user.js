@@ -35,7 +35,7 @@ const read = async (params, credentials, signal) => {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer' + credentials.t
+                'Authorization': 'Bearer ' + credentials.t
             }
         })
         return await response.json()
@@ -51,7 +51,7 @@ const update = async (params, credentials, user) => {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer' + credentials.t
+                'Authorization': 'Bearer ' + credentials.t
             },
             body: JSON.stringify(user)
         })
@@ -68,7 +68,7 @@ const remove = async (params, credentials) => {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer' + credentials.t
+                'Authorization': 'Bearer ' + credentials.t
             }
         })
         return await response.json()

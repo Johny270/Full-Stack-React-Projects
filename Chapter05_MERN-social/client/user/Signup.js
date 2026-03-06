@@ -38,6 +38,13 @@ const useStyles = makeStyles(theme => ({
     submit: {
         margin: 'auto',
         marginBottom: theme.spacing(2)
+    },
+    cardActions: {
+        justifyContent: 'center'
+    },
+    dialogActions: {
+        justifyContent: 'center',
+        textAlign: 'center'
     }
 }))
 
@@ -100,20 +107,20 @@ export default function Signup() {
                         </Typography>)
                     }
                 </CardContent>
-                <CardActions>
+                <CardActions className={classes.cardActions}>
                     <Button color="primary" variant="contained" 
                         onClick={clickSubmit} className={classes.submit}>Submit</Button>
                 </CardActions>
             </Card>
 
             <Dialog open={values.open} disableBackdropClick={true}>
-                <DialogTitle>New Account</DialogTitle>
+                <DialogTitle className={classes.dialogActions}>New Account</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
                         New account successfully created.
                     </DialogContentText>
                 </DialogContent>
-                <DialogActions>
+                <DialogActions className={classes.dialogActions}>
                     <Link to="/signin">
                         <Button color="primary" autoFocus="autoFocus" variant="contained">
                             Sign In
