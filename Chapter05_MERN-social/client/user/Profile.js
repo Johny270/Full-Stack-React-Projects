@@ -35,8 +35,16 @@ const useStyles = makeStyles(theme => ({
 
 export default function Profile({ match }) {
     const classes = useStyles()
+    // const [values, setValues] = useState({
+    //     user: { following:[], followers:[] },
+    //     redirectToSignin: false,
+    //     following: false
+    // })
     const [user, setUser] = useState({})
     const [redirectToSignin, setRedirectToSignin] = useState(false)
+    const photoUrl = user._id 
+        ? `/api/users/photo/${user._id}?${new Date().getTime()}`
+        : `/api/users/defaultphoto`
 
     useEffect(() => {
         const abortController = new AbortController()
@@ -68,7 +76,7 @@ export default function Profile({ match }) {
             <List dense>
                 <ListItem>
                     <ListItemAvatar>
-                        <Avatar>
+                        <Avatar src={photoUrl}>
                             <Person />
                         </Avatar>
                     </ListItemAvatar>

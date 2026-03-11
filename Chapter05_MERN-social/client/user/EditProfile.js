@@ -10,6 +10,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import auth from './../auth/auth-helper'
 import {read, update} from './api-user.js'
 import {Redirect} from 'react-router-dom'
+import FileUpload from '@material-ui/icons/AddPhotoAlternate'
 
 
 const useStyles = makeStyles(theme => ({
@@ -46,7 +47,10 @@ const useStyles = makeStyles(theme => ({
         email: '',
         open: false,
         error: '',
-        redirectToProfile: false
+        redirectToProfile: false,
+        about: '',
+        id: '',
+        photo: ''
     })
     const jwt = auth.isAuthenticated()
 
@@ -60,7 +64,7 @@ const useStyles = makeStyles(theme => ({
             if (data && data.error) {
                 setValues({ ...values, error: data.error })
             } else {
-                setValues({ ...values, name: data.name, email: data.email })
+                setValues({ ...values, id: data._id, name: data.name, email: data.email, about: data.about })
             }
         })
         return function cleanup() {
@@ -70,31 +74,32 @@ const useStyles = makeStyles(theme => ({
 
     const clickSubmit = () => {
         const jwt = auth.isAuthenticated()
-        const user = {
-            name: values.name || undefined,
-            email: values.email || undefined,
-            about: values.about || undefined,
-            password: values.password || undefined
-        }
+        let userData = new FormData()
+        values.name && userData.append('name', values.name)
+        values.email && userData.append('email', values.email)
+        values.password && userData.append('password', values.password)
+        values.about && userData.append('about', values.about)
+        values.photo && userData.append('photo', values.photo)
         update({
             userId: match.params.userId
         }, {
             t: jwt.token
-        }, user).then((data) => {
+        }, userData).then((data) => {
             if (data && data.error) {
                 setValues({ ...values, error: data.error })
             } else {
-                setValues({ ...values, userId: data._id, redirectToProfile: true })
+                setValues({ ...values, redirectToProfile: true })
             }
         })
     }
 
     const handleChange = name => event => {
-        setValues({ ...values, [name]: event.target.value })
+        const value = name === 'photo' ? event.target.files[0] : event.target.value
+        setValues({ ...values, [name]: value })
     }
 
     if (values.redirectToProfile) {
-        return (<Redirect to={'/user/' + values.userId} />)
+        return (<Redirect to={'/user/' + values.id} />)
     }
 
     return (
@@ -102,7 +107,16 @@ const useStyles = makeStyles(theme => ({
             <CardContent>
                 <Typography variant="h6" className={classes.title}>
                     Edit Profile
-                </Typography>
+                </Typography><br />
+                <input accept="image/*" type="file" onChange={handleChange('photo')} style={{display: 'none'}} id="icon-button-file" />
+                <label htmlFor="icon-button-file">
+                    <Button variant="contained" color="default" component="span">
+                        Upload <FileUpload />
+                    </Button>
+                </label>
+                <span className={classes.filename}>
+                    {values.photo ? values.photo.name : ''}
+                </span><br />
                 <TextField id="name" label="Name" className={classes.textField} value={values.name} onChange={handleChange('name')} margin="normal" /><br />
                 <TextField id="multiline-flexible" label="About" multiline rows="2" className={classes.textField} value={values.about} onChange={handleChange('about')} margin="normal" /><br />
                 <TextField id="email" label="Email" className={classes.textField} value={values.email} onChange={handleChange('email')} margin="normal" /><br />
