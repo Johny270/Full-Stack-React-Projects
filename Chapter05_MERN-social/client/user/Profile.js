@@ -17,6 +17,7 @@ import auth from './../auth/auth-helper.js'
 import {read} from './api-user.js'
 import {Redirect, Link} from 'react-router-dom'
 import FollowProfileButton from './FollowProfileButton.js'
+import ProfileTabs from './ProfileTabs.js'
 
 const useStyles = makeStyles(theme => ({
   root: theme.mixins.gutters({
@@ -129,6 +130,7 @@ export default function Profile({ match }) {
                         new Date(values.user.created)).toDateString()} />
                 </ListItem>
             </List>
+            <ProfileTabs user={values.user} />
         </Paper>
     )
 }
