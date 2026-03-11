@@ -141,7 +141,7 @@ const addFollower = async (req, res) => {
 
 const removeFollowing = async (req, res, next) => {
     try {
-        await User.findIdAndUpdate(req.body.userId, 
+        await User.findByIdAndUpdate(req.body.userId,
             { $pull: { following: req.body.unfollowId }}
         )
         next()
@@ -162,6 +162,7 @@ const removeFollower = async (req, res) => {
         .exec()
         result.hashed_password = undefined
         result.salt = undefined
+        res.json(result)
     } catch (err) {
         return res.status(400).json({
             error: errorHandler.getErrorMessage(err)

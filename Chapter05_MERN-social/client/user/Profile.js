@@ -16,6 +16,7 @@ import DeleteUser from './DeleteUser.js'
 import auth from './../auth/auth-helper.js'
 import {read} from './api-user.js'
 import {Redirect, Link} from 'react-router-dom'
+import FollowProfileButton from './FollowProfileButton.js'
 
 const useStyles = makeStyles(theme => ({
   root: theme.mixins.gutters({
@@ -40,23 +41,30 @@ export default function Profile({ match }) {
     //     redirectToSignin: false,
     //     following: false
     // })
-    const [user, setUser] = useState({})
-    const [redirectToSignin, setRedirectToSignin] = useState(false)
-    const photoUrl = user._id 
-        ? `/api/users/photo/${user._id}?${new Date().getTime()}`
+    const [values, setValues] = useState({
+        user: { following:[], followers:[] },
+        redirectToSignin: false,
+        following: false
+    })
+
+    const photoUrl = values.user._id 
+        ? `/api/users/photo/${values.user._id}?${new Date().getTime()}`
         : `/api/users/defaultphoto`
 
+    const jwt = auth.isAuthenticated()
     useEffect(() => {
         const abortController = new AbortController()
         const signal = abortController.signal
-        const jwt = auth.isAuthenticated()
+        
         read({
             userId: match.params.userId
         }, {t: jwt.token}, signal).then((data) => {
             if (data && data.error) {
-                setRedirectToSignin(true)
+                setValues({ ...values, redirectToSignin: true })
             } else {
-                setUser(data)
+                let following = checkFollow(data)
+                setValues({ ...values, user: data, following: following })
+                // setUser(data)
             }
         })
         return function cleanup() {
@@ -64,7 +72,28 @@ export default function Profile({ match }) {
         }
     }, [match.params.userId])
 
-    if (redirectToSignin) {
+    const checkFollow = (user) => {
+        const match = user.followers.some((follower) => {
+            return follower._id == jwt.user._id
+        })
+        return match
+    }
+
+    const clickFollowButton = (callApi) => {
+        callApi({
+            userId: jwt.user._id
+        }, {
+            t: jwt.token
+        }, values.user._id).then((data) => {
+            if (data.error) {
+                setValues({ ...values, error: data.error })
+            } else {
+                setValues({ ...values, user: data, following: !values.following })
+            }
+        })
+    }
+
+    if (values.redirectToSignin) {
         return <Redirect to='/signin' />
     }
 
@@ -80,27 +109,24 @@ export default function Profile({ match }) {
                             <Person />
                         </Avatar>
                     </ListItemAvatar>
-                    <ListItemText primary={user.name} secondary={user.email} />
-                    { auth.isAuthenticated().user && auth.isAuthenticated().user._id ==
-                    user._id &&
-                        (<ListItemSecondaryAction>
-                            <Link to={"/user/edit/" + user._id}>
-                                <IconButton aria-label="Edit" color="primary">
-                                    <Edit />
-                                </IconButton>
-                            </Link>
-                            <DeleteUser userId={user._id} />
-                        </ListItemSecondaryAction>)
+                    <ListItemText primary={values.user.name} secondary={values.user.email} />
+                    { auth.isAuthenticated().user && auth.isAuthenticated().user._id == values.user._id
+                        ? (<ListItemSecondaryAction>
+                                <Link to={"/user/edit/" + values.user._id}>
+                                    <IconButton aria-label="Edit" color="primary">
+                                        <Edit />
+                                    </IconButton>
+                                </Link>
+                                <DeleteUser userId={values.user._id} />
+                            </ListItemSecondaryAction>)
+                        : (<FollowProfileButton following={values.following} onButtonClick={clickFollowButton} />)
+                        
                     }
                 </ListItem>
                 <Divider />
                 <ListItem>
-                    <ListItemText primary={"Joined: " + (
-                        new Date(user.created)).toDateString()} />
-                </ListItem>
-                <Divider />
-                <ListItem className={classes.about}>
-                    <ListItemText primary={user.about} />
+                    <ListItemText primary={values.user.about} secondary={"joined: " + (
+                        new Date(values.user.created)).toDateString()} />
                 </ListItem>
             </List>
         </Paper>
