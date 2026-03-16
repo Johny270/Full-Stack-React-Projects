@@ -106,6 +106,34 @@ const isPoster = (req, res, next) => {
     }
  }
 
+const like = async (res, res) => {
+    try {   
+        let result = await Post.findByIdAndUpdate(req.body.postId,
+            {$push: {likes: req.body.userId}},
+            {new: true}
+        )
+        return res.json(result)
+    } catch (err) {
+        return res.status(400).json({
+            error: errorHandler.getErrorHandler(err)
+        })
+    }
+}
+
+const unlike = async (req, res) => {
+    try {
+        let result =  await Post.findByIdAndUpdate(req.body.postId, 
+            { $pull: {likes: req.body.userId }},
+            { new: true }
+        )
+        res.json(result)
+    } catch (err) {
+        return res.status(400).json({
+            error: errorHandler.getErrorHandler(err)
+        })
+    }
+}
+
 export default {
     listNewsFeed,
     listByUser,
@@ -113,5 +141,7 @@ export default {
     photo,
     postByID,
     isPoster,
-    remove
+    remove,
+    like,
+    unlike
 }

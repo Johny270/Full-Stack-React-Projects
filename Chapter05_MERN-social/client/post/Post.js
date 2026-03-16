@@ -53,6 +53,7 @@ export default function Post(props) {
     const classes = useStyles()
     const jwt = auth.isAuthenticated()
     const [values, setValues] = useState({
+        like: checkLike(props.post.likes),
         likes: props.post.likes.length,
         comments: props.post.comments
     })
@@ -70,6 +71,28 @@ export default function Post(props) {
             }
         })
     }
+
+    const checkLike = (likes) => {
+        let match = likes.indexOf(jwt.user._id) !== -1
+        return match
+    }
+
+    const clickLike = () => {
+        let callApi = values.like ? unlike : like
+        const jwt = auth.isAuthenticated()
+        callApi({
+            userId: jwt.user._id
+        }, {
+            t: jwt.token
+        }, props.post._id).then((data) => {
+            if (data.error) {
+                console.log(data.error)
+            } else {
+                setValues({ ...values, like: !values.like, likes: data.likes.length})
+            }
+        })
+    }
+
     return (
         <div>
             {/* Header */}
