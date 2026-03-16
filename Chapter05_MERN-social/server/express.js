@@ -35,6 +35,7 @@ app.use('/dist', express.static(path.join(CURRENT_WORKING_DIR, 'dist')))
 // Mounting routes
 app.use('/', userRoutes)
 app.use('/', authRoutes)
+app.use('/', postRoutes)
 
 // Handling auth-related errors thrown by express-jwt
 // when trying to validate JWT tokens in incoming requests

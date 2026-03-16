@@ -18,6 +18,7 @@ import {read} from './api-user.js'
 import {Redirect, Link} from 'react-router-dom'
 import FollowProfileButton from './FollowProfileButton.js'
 import ProfileTabs from './ProfileTabs.js'
+import { listByUser } from './../post/api-posts.js'
 
 const useStyles = makeStyles(theme => ({
   root: theme.mixins.gutters({
@@ -47,6 +48,7 @@ export default function Profile({ match }) {
         redirectToSignin: false,
         following: false
     })
+    const [posts, setPosts] = useState([])
 
     const photoUrl = values.user._id 
         ? `/api/users/photo/${values.user._id}?${new Date().getTime()}`
@@ -93,7 +95,20 @@ export default function Profile({ match }) {
             }
         })
     }
-
+    
+    const loadPosts = (user) => {
+        listByUser({
+            userId: user
+        }, {
+            t: jwt.token
+        }).then((data) => {
+            if (data.error) {
+                console.log(data.error)
+            } else {
+                setPosts(data)
+            }
+        })
+    }
     if (values.redirectToSignin) {
         return <Redirect to='/signin' />
     }
