@@ -37,7 +37,81 @@ const listByUser = async (req, res) => {
     
 }
 
+const create = (req, res, next) => {
+    let form = new formidable.IncomingForm()
+    form.keepExtensions = true
+    form.parse(req, async (err, fields,  files) => {
+        if (err) {
+            return res.status(400).json({
+                error: "Image could not be uploaded"
+            })
+        }
+        let post = new Post(fields)
+        post.postedBy = req.profile
+        if (files.photo) {
+            post.photo.data = fs.readFileSync(files.photo.path)
+            post.photo.contentType = files.photo.type
+        }
+        try {
+            let result = await post.save()
+            res.json(result)
+        } catch (err) {
+            return res.status(400).json({
+                error: errorHandler.getErrorMessage(Err)
+            })
+        }
+    })
+}
+
+const photo = (req, res, next) => {
+    res.set("Content-Type", req.post.contentType)
+    return res.send(req.post.photo.data)
+}
+
+const postByID = async(req, res, next, id) => {
+    try {
+        let post = await Post.findById(id).populate('postedBy', '_id, name')
+                                            .exec()
+        if (!post) return res.status(200).json({
+            error: "Post not found"
+        })
+        req.post = post
+        next()
+    } catch (err) {
+        return res.status(400).json({
+            error: "Could not retrieve use post"
+        })
+    }
+}
+
+const isPoster = (req, res, next) => {
+    let isPoster = req.post && req.auth && req.post.postedBy._id == req.auth._id
+    if (!isPosted) {
+        return res.status(403).json({
+            error: "User is not authorized"
+        })
+    }
+    next()
+ }
+
+ const remove = async (req, res) => {
+    let post = req.post
+    try {
+        let deletedPost = await post.remove()
+        res.json(deletedPost)
+    } catch(err) {
+        return res.status(400).json({
+            error: errorHandler.getErrorHandler(err)
+        })
+    }
+ }
+
 export default {
     listNewsFeed,
-    listByUser
+    listByUser,
+    create,
+    photo,
+    postByID,
+    isPoster,
+    remove
 }
