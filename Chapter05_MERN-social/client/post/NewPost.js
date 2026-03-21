@@ -71,6 +71,11 @@ export default function NewPost (props) {
         setValues({ ...values, user: auth.isAuthenticated().user })
     }, [])
 
+    const handleChange = name => event => {
+        const value = name === 'photo' ? event.target.files[0] : event.target.value
+        setValues({ ...values, [name]: value })
+    }
+
     const clickPost = () => {
         let postData = new FormData()
         postData.append('text', values.text)
@@ -85,7 +90,49 @@ export default function NewPost (props) {
                 setValues({ ...values, error: data.error })
             } else {
                 setValues({ ...values, text: '', photo: '' })
+                props.addUpdate(data)
             }
         })
     }
+
+    return (
+        <div className={classes.root}>
+            <Card className={classes.card}>
+                <CardHeader
+                    avatar={<Avatar src={values.user._id ? `/api/users/photo/${values.user._id}` : `/api/users/defaultphoto`} />}
+                    title={values.user.name}
+                    className={classes.cardHeader}
+                />
+                <CardContent className={classes.cardContent}>
+                    <TextField
+                        placeholder="Share your thoughts..."
+                        multiline
+                        minRows={3}
+                        value={values.text}
+                        onChange={handleChange('text')}
+                        className={classes.textField}
+                        margin="normal"
+                    />
+                    <input accept="image/*" className={classes.input} id="icon-button-file" type="file" onChange={handleChange('photo')} />
+                    <label htmlFor="icon-button-file">
+                        <IconButton className={classes.photoButton} color="secondary" component="span">
+                            <PhotoCamera />
+                        </IconButton>
+                    </label>
+                    <span className={classes.filename}>{values.photo ? values.photo.name : ''}</span>
+                    {values.error && (
+                        <Typography component="p" color="error">
+                            <Icon color="error">error</Icon>
+                            {values.error}
+                        </Typography>
+                    )}
+                </CardContent>
+                <CardActions>
+                    <Button color="primary" variant="contained" disabled={values.text === ''} onClick={clickPost} className={classes.submit}>
+                        POST
+                    </Button>
+                </CardActions>
+            </Card>
+        </div>
+    )
 }

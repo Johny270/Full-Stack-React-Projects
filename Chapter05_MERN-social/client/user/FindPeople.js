@@ -1,4 +1,4 @@
-import React, { useState, useEffectr } from 'react'
+import React, { useState, useEffect } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import Paper from '@material-ui/core/Paper'
 import List from '@material-ui/core/List'
@@ -14,9 +14,9 @@ import {Link} from 'react-router-dom'
 import { findPeople, follow } from './api-user.js'
 import auth from './../auth/auth-helper.js'
 import Snackbar from '@material-ui/core/Snackbar'
-import ViewIcon from '@material-i/icons/Visibility'
+import ViewIcon from '@material-ui/icons/Visibility'
 
-const useStyles = makeStyle(theme => ({
+const useStyles = makeStyles(theme => ({
     root: theme.mixins.gutters({
         padding: theme.spacing(1),
         margin: 0

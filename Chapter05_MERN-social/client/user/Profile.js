@@ -18,7 +18,7 @@ import {read} from './api-user.js'
 import {Redirect, Link} from 'react-router-dom'
 import FollowProfileButton from './FollowProfileButton.js'
 import ProfileTabs from './ProfileTabs.js'
-import { listByUser } from './../post/api-posts.js'
+import { listByUser } from './../post/api-post.js'
 
 const useStyles = makeStyles(theme => ({
   root: theme.mixins.gutters({
@@ -67,7 +67,7 @@ export default function Profile({ match }) {
             } else {
                 let following = checkFollow(data)
                 setValues({ ...values, user: data, following: following })
-                // setUser(data)
+                loadPosts(data._id)
             }
         })
         return function cleanup() {
@@ -96,6 +96,18 @@ export default function Profile({ match }) {
         })
     }
     
+    const addPost = (post) => {
+        const updatedPosts = [post, ...posts]
+        setPosts(updatedPosts)
+    }
+
+    const removePost = (post) => {
+        const updatedPosts = [...posts]
+        const index = updatedPosts.indexOf(post)
+        updatedPosts.splice(index, 1)
+        setPosts(updatedPosts)
+    }
+
     const loadPosts = (user) => {
         listByUser({
             userId: user
@@ -145,7 +157,7 @@ export default function Profile({ match }) {
                         new Date(values.user.created)).toDateString()} />
                 </ListItem>
             </List>
-            <ProfileTabs user={values.user} />
+            <ProfileTabs user={values.user} posts={posts} removePostUpdate={removePost} addPostUpdate={addPost} />
         </Paper>
     )
 }

@@ -52,6 +52,12 @@ const useStyles = makeStyles(theme => ({
 export default function Post(props) {
     const classes = useStyles()
     const jwt = auth.isAuthenticated()
+
+    const checkLike = (likes) => {
+        let match = likes.indexOf(jwt.user._id) !== -1
+        return match
+    }
+
     const [values, setValues] = useState({
         like: checkLike(props.post.likes),
         likes: props.post.likes.length,
@@ -72,11 +78,6 @@ export default function Post(props) {
         })
     }
 
-    const checkLike = (likes) => {
-        let match = likes.indexOf(jwt.user._id) !== -1
-        return match
-    }
-
     const clickLike = () => {
         let callApi = values.like ? unlike : like
         const jwt = auth.isAuthenticated()
@@ -93,6 +94,10 @@ export default function Post(props) {
         })
     }
 
+    const updateComments = (comments) => {
+        setValues({ ...values, comments: comments })
+    }
+
     return (
         <div>
             {/* Header */}
@@ -101,8 +106,8 @@ export default function Post(props) {
                 action = { props.post.postedBy._id === auth.isAuthenticated().user._id 
                     && <IconButton onClick={deletePost}><DeleteIcon /></IconButton>
                 }
-                title={<Link to={"/user/" + 
-                    props.post.postedBy._id}>{props.post.postedBy._id}</Link>
+                title={<Link to={"/user/" +
+                    props.post.postedBy._id}>{props.post.postedBy.name}</Link>
                 }
                 subheader={ (new Date(props.post.created)).toDateString() }
                 className={classes.cardHeader}
@@ -113,10 +118,10 @@ export default function Post(props) {
                 <Typography component="p" className={classes.text}>
                     {props.post.text}
                 </Typography>
-                {props.post.photo} &&
+                {props.post.photo &&
                 (<div className={classes.photo}>
-                    <img className={classes.media} src={'/api/posts/photo/' + props.post._id} />    
-                </div>)
+                    <img className={classes.media} src={'/api/posts/photo/' + props.post._id} />
+                </div>)}
             </CardContent>
             {/* Actions */}
             <CardActions>

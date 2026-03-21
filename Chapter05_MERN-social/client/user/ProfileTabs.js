@@ -6,6 +6,8 @@ import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
 import FollowGrid from './FollowGrid.js'
 import PostList from './../post/PostList.js'
+import NewPost from './../post/NewPost.js'
+import auth from './../auth/auth-helper.js'
 
 export default function ProfileTabs (props) {
     const [tab, setTab] = useState(0)
@@ -13,6 +15,9 @@ export default function ProfileTabs (props) {
     const handleTabChange = (event, value) => {
         setTab(value)
     }
+
+    const currentUser = auth.isAuthenticated()
+    const isOwner = currentUser && currentUser.user._id === props.user._id
 
     return (
         <div>
@@ -23,7 +28,12 @@ export default function ProfileTabs (props) {
                     <Tab label="Followers" />
                 </Tabs>
             </AppBar>
-            {tab === 0 && <TabContainer><PostList removeUpdate={props.removePostUpdate} posts={props.posts} /></TabContainer>}
+            {tab === 0 && (
+                <TabContainer>
+                    {isOwner && <NewPost addUpdate={props.addPostUpdate} />}
+                    <PostList removeUpdate={props.removePostUpdate} posts={props.posts} />
+                </TabContainer>
+            )}
             {tab === 1 && <TabContainer><FollowGrid people={props.user.following} /></TabContainer>}
             {tab === 2 && <TabContainer><FollowGrid people={props.user.followers} /></TabContainer>}
         </div>

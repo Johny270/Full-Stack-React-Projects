@@ -1,13 +1,14 @@
 import Post from '../models/post.model.js'
 import errorHandler from './../helpers/dbErrorHandler'
 import fs from 'fs'
+import formidable from 'formidable'
 
 const listNewsFeed = async(req, res) => {
     let following = req.profile.following
     following.push(req.profile._id)
     try {
         let posts = await Post.find({
-            postedBy: { $sin: req.profile.following }
+            postedBy: { $in: req.profile.following }
         }).populate('comments.postedBy', '_id name')
             .populate('postedBy', '_id name')
             .sort('-created')
@@ -15,7 +16,7 @@ const listNewsFeed = async(req, res) => {
         res.json(posts)
     } catch (err) {
         return res.status(400).json({
-            error: errorHandler.getErrorHandler(err)
+            error: errorHandler.getErrorMessage(err)
         })
     }
 }
@@ -31,7 +32,7 @@ const listByUser = async (req, res) => {
         res.json(posts)
     } catch (err) {
         return res.status(400).json({
-            error: errorHandler.getErrorHandler(err)
+            error: errorHandler.getErrorMessage(err)
         })
     }
     
@@ -57,14 +58,14 @@ const create = (req, res, next) => {
             res.json(result)
         } catch (err) {
             return res.status(400).json({
-                error: errorHandler.getErrorMessage(Err)
+                error: errorHandler.getErrorMessage(err)
             })
         }
     })
 }
 
 const photo = (req, res, next) => {
-    res.set("Content-Type", req.post.contentType)
+    res.set("Content-Type", req.post.photo.contentType)
     return res.send(req.post.photo.data)
 }
 
@@ -86,7 +87,7 @@ const postByID = async(req, res, next, id) => {
 
 const isPoster = (req, res, next) => {
     let isPoster = req.post && req.auth && req.post.postedBy._id == req.auth._id
-    if (!isPosted) {
+    if (!isPoster) {
         return res.status(403).json({
             error: "User is not authorized"
         })
@@ -101,12 +102,12 @@ const isPoster = (req, res, next) => {
         res.json(deletedPost)
     } catch(err) {
         return res.status(400).json({
-            error: errorHandler.getErrorHandler(err)
+            error: errorHandler.getErrorMessage(err)
         })
     }
  }
 
-const like = async (res, res) => {
+const like = async (req, res) => {
     try {   
         let result = await Post.findByIdAndUpdate(req.body.postId,
             {$push: {likes: req.body.userId}},
@@ -115,7 +116,7 @@ const like = async (res, res) => {
         return res.json(result)
     } catch (err) {
         return res.status(400).json({
-            error: errorHandler.getErrorHandler(err)
+            error: errorHandler.getErrorMessage(err)
         })
     }
 }
@@ -129,7 +130,7 @@ const unlike = async (req, res) => {
         res.json(result)
     } catch (err) {
         return res.status(400).json({
-            error: errorHandler.getErrorHandler(err)
+            error: errorHandler.getErrorMessage(err)
         })
     }
 }
@@ -148,7 +149,7 @@ const comment = async (req, res) => {
         res.json(result)
     } catch (err) {
         return res.status(400).json({
-            error: errorHandler.getErrorHandler(err)
+            error: errorHandler.getErrorMessage(err)
         })
     }
 }
@@ -159,7 +160,7 @@ const uncomment = async(req, res) => {
     let comment = req.body.comment
     try {
         let result = await Post.findByIdAndUpdate(req.body.postId, {
-            $pull: {comments: { _id: comment._Id }}
+            $pull: {comments: { _id: comment._id }}
         }, { new: true }).populate('comments.postedBy', '_id name')
                         .populate('postedBy', '_id name')
                         .exec()
