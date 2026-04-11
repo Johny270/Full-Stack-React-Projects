@@ -7,6 +7,7 @@ import helmet from 'helmet'
 import Template from './../template.js'
 import userRoutes from './routes/user.routes.js'
 import authRoutes from './routes/auth.routes.js'
+import courseRoutes from './routes/course.routes.js'
 import devBundle from './devBundle.js'
 import path from 'path'
 import React from 'react'
@@ -35,6 +36,7 @@ app.use('/dist', express.static(path.join(CURRENT_WORKING_DIR, 'dist')))
 // Mounting routes
 app.use('/', userRoutes)
 app.use('/', authRoutes)
+app.use('/', courseRoutes)
 
 // Handling auth-related errors thrown by express-jwt
 // when trying to validate JWT tokens in incoming requests

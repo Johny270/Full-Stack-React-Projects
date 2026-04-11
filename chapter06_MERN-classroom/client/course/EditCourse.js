@@ -138,6 +138,20 @@ export default function EditCourse({match}) {
         })
     }
 
+    const handleLessonChange = (name, index) => event => {
+        const lessons = course.lessons
+        lessons[index] [name] = event.target.value
+        setCourse({ ...course, lessons: lessons })
+    }
+
+    const moveUp = index => event => {
+        const lessons = course.lessons
+        const moveUp = lessons[index]
+        lessons[index] = lessons[index-1]
+        lessons[index-1] = moveUp
+        setCourse({ ...course, lessons: lessons })
+    }
+
     return (
         <div>
             <CardHeader
@@ -181,6 +195,39 @@ export default function EditCourse({match}) {
                     </span><br />
                 </div>
             </div>
+
+            <ListItemText
+                primary={<>
+                    <TextField 
+                        label="title"
+                        type="text"
+                        fullWidth
+                        value={lesson.title}
+                        onChange={handleLessonChange('title', index)}
+                    /><br />
+                    <TextField
+                        multiline
+                        rows="5"
+                        label="Content"
+                        type="text"
+                        fullWidth
+                        value={lesson.content}
+                        onChange={handleLessonChange('content', index)}
+                    /><br />
+                    <TextField
+                        label="Resource link"
+                        type="text"
+                        fullWidth
+                        value={lesson.resource_url}
+                        onChange={handleLessonChange('resource_url', index)}
+                    /><br />
+                </>}
+            />
+            { index != 0 &&
+                <IconButton color="primary" onClick={moveUp(Index)}>
+                    <ArrowUp />
+                </IconButton>
+            }
         </div>
     )
 }

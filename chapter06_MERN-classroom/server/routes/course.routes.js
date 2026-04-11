@@ -11,5 +11,16 @@ router.route('/api/courses/photo/:courseId')
     .get(courseCtrl.photo, courseCtrl.defaultPhoto)
 router.route('/api/courses/defaultphoto')
     .get(courseCtrl.defaultPhoto)
+router.route('/api/courses/by/:userId')
+    .get(authCtrl.requireSignin, authCtrl.hasAuthorization, courseCtrl.listByInstructor)
+router.route('/api/courses/:courseId')
+    .get(courseCtrl.read)
+router.route('/api/courses/:courseId/lesson/new')
+    .put(authCtrl.requireSignin, courseCtrl.isInstructor, courseCtrl.newLesson)
+router.route('/api/courses/:courseId')
+    .put(authCtrl.requireSignin, courseCtrl.isInstructor, courseCtrl.update)
+
+router.param('courseId', courseCtrl.courseByID)
+router.param('userId', userCtrl.userByID)
 
 export default router

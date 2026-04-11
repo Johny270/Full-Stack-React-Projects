@@ -86,32 +86,49 @@ export default function NewCourse() {
 
     return (
         <div>
-            <input accept="image/*" onChange={handleChange('image')} type="file" style={{display:'none'}} />
-            <label htmlFor="icon-button-file">
-                <Button variant="contained" color="secondary" component="span">
-                    Upload Photo <FileUpload />
-                </Button>
-            </label>
-            <span>{values.image ? values.image.name : ''}</span>
-            <TextField
-                id="name"
-                label="Name"
-                value={values.name} onChange={handleChange('name')}
-            /><br />
-            <TextField
-                id="multiline-flexible"
-                label="Description"
-                multiline
-                rows="2"
-                value={values.description}
-                onChange={handleChange('description')}
-            /><br />
-            <TextField
-                id="category"
-                label="Category"
-                value={values.category}
-                onChange={handleChange('category')}
-            />
+            <Card className={classes.card}>
+                <CardContent>
+                    <Typography variant="h6" className={classes.title}>New Course</Typography>
+                    <br />
+                    <input accept="image/*" onChange={handleChange('image')} type="file" style={{display:'none'}} />
+                    <label htmlFor="icon-button-file">
+                        <Button variant="contained" color="secondary" component="span">
+                            Upload Photo <FileUpload />
+                        </Button>
+                    </label>
+                    <span>{values.image ? values.image.name : ''}</span>
+                    <TextField
+                        id="name"
+                        label="Name"
+                        value={values.name} onChange={handleChange('name')}
+                    /><br />
+                    <TextField
+                        id="multiline-flexible"
+                        label="Description"
+                        multiline
+                        rows="2"
+                        value={values.description}
+                        onChange={handleChange('description')}
+                    /><br />
+                    <TextField
+                        id="category"
+                        label="Category"
+                        value={values.category}
+                        onChange={handleChange('category')}
+                    />
+                    {
+                        values.error && (<Typography component="p" color="error">
+                            <Icon color="error" className={classes.error}>Error</Icon>
+                            {values.error}
+                        </Typography>)
+                    }
+                </CardContent>
+                <CardActions>
+                    <Button color="primary" variant="contained" onClick={clickSubmit} className={classes.submit}>Submit</Button>
+                    <Link to='/teach/courses' className={classes.submit}><Button variant="contained">Cancel</Button></Link>
+                </CardActions>
+            </Card>
+            
         </div>
     )
 }

@@ -8,6 +8,10 @@ import Profile from './user/Profile.js'
 import EditProfile from './user/EditProfile.js'
 import PrivateRoute from './auth/PrivateRoute.js'
 import Menu from './core/Menu.js'
+import NewCourse from './course/NewCourse.js'
+import MyCourses from './course/MyCourses.js'
+import Course from './course/Course.js'
+import EditCourse from './course/EditCourse.js'
 
 const MainRouter = () => {
     return (
@@ -20,6 +24,10 @@ const MainRouter = () => {
                 <Route path="/signin" component={Signin} />
                 <PrivateRoute path="/user/edit/:userId" component={EditProfile} />
                 <Route path="/user/:userId" component={Profile} />
+                <Route path="/teach/course/new" component={NewCourse} />
+                <Route path="/seller/courses" component={MyCourses} />
+                <Route path="/course/:courseId" component={Course} />
+                <PrivateRoute path="/teach/course/edit/:courseId" component={EditCourse} />
             </Switch>
         </div>
     )

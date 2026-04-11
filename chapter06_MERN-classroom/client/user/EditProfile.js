@@ -6,6 +6,8 @@ import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
 import Icon from '@material-ui/core/Icon'
+import FormControlLabel from '@material-ui/core/FormControlLabel'
+import Switch from '@material-ui/core/Switch'
 import { makeStyles } from '@material-ui/core/styles'
 import auth from './../auth/auth-helper'
 import {read, update} from './api-user.js'
@@ -105,7 +107,7 @@ const useStyles = makeStyles(theme => ({
     }
 
     return (
-        <Card>
+        <Card className={classes.card}>
             <CardContent>
                 <Typography variant="h6" className={classes.title}>
                     Edit Profile
@@ -118,7 +120,7 @@ const useStyles = makeStyles(theme => ({
                     I am an Educator
                 </Typography>
                 <FormControlLabel
-                    control={<Switch classes={{ checked: classes.checked, bar: classes.bar }} checked={values.educator} onChange={handleCheck} />}
+                    control={<Switch checked={values.educator} onChange={handleCheck} />}
                     label={values.educator? 'Yes' : 'No'}
                 />
                 <br /> {
