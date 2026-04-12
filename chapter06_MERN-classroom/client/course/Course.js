@@ -120,6 +120,29 @@ export default function Course ({match}) {
         setCourse(course)
     }
 
+    const clickPublish = () => {
+        if (course.lessons.length > 0) {
+            setOpen(true)
+        }
+    }
+
+    const publish = () => {
+        let courseData = new FormData()
+        courseData.append('published', true)
+        update({
+            courseId: match.params.courseId
+        }, {
+            t: jwt.token
+        }, courseData).then((data) => {
+            if (data && data.error) {
+                setValues({ ...values, error: data.error})
+            } else {
+                setCourse({ ...course, published: true})
+                setOpen(false)
+            }
+        })
+    }
+
     return (
         <div>
             <Card>
@@ -170,6 +193,37 @@ export default function Course ({match}) {
                     </span>)
                 })}
             </List>
+            
+            
+            {/* Publish button */}
+            { !course.published ? 
+                (<>
+                    <Button color="secondary" variant="outlined" onClick={clickPublish}>
+                        { course.lessons.length == 0 ? "Add at least 1 lesson to publish" : "Publish" }
+                    </Button>
+                    {/* Delete modal */}
+                    <DeleteCourse course={course} onRemove={removeCourse} />
+                </>) : (
+                    <Button color="primary" variant="outlined">Published</Button>
+                )
+
+            }
+            {/* Dialog box to confirm the action publish */}
+            <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+                <DialogTitle id="form-dialog-title">Publish Course</DialogTitle>
+                <DialogContent>
+                    <Typography variant="body1">
+                        Publishing your course will make it live to students for enrollment.
+                    </Typography>
+                    <Typography variant="body1">
+                        Make sure all lessons are added and ready for publishing
+                    </Typography>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose} color="primary" variant="contained">Cancel</Button>
+                    <Button onClick={publish} color="secondary" variant="contained">Publish</Button>
+                </DialogActions>
+            </Dialog>
         </div>
     )
 }
